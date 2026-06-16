@@ -1,12 +1,11 @@
-import {Injectable} from '@angular/core';
-import {Room} from '../models/room';
-import {environment} from '../../environments/environment';
+import { Injectable } from '@angular/core';
+import { Room } from '../models/room';
+import { environment } from '../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class ChatService {
-
   rooms: Room[] = [];
   username: string | null = null;
 
@@ -16,7 +15,7 @@ export class ChatService {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   private roomListener: ((resp: any) => any) | null = null;
 
-  private jsonHeaders = new Headers({'Content-Type': 'application/json'});
+  private jsonHeaders = new Headers({ 'Content-Type': 'application/json' });
 
   isLoggedIn(): boolean {
     return this.clientId !== null;
@@ -34,7 +33,7 @@ export class ChatService {
 
     const response = await fetch(`${environment.SERVER_URL}/${url}`, {
       method: 'POST',
-      body: username
+      body: username,
     });
     const cid = await response.text();
 
@@ -53,12 +52,12 @@ export class ChatService {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.eventSource.addEventListener('roomsRemoved', (rsp: any) => {
       const roomIds = JSON.parse(rsp.data);
-      this.rooms = this.rooms.filter(room => roomIds.indexOf(room.id) === -1);
+      this.rooms = this.rooms.filter((room) => roomIds.indexOf(room.id) === -1);
     });
 
     const resp = await fetch(`${environment.SERVER_URL}/subscribe`, {
       method: 'POST',
-      body: this.clientId
+      body: this.clientId,
     });
 
     this.rooms = await resp.json();
@@ -69,7 +68,7 @@ export class ChatService {
   async signout(): Promise<void> {
     await fetch(`${environment.SERVER_URL}/signout`, {
       method: 'POST',
-      body: this.clientId
+      body: this.clientId,
     });
 
     this.clientId = null;
@@ -83,14 +82,14 @@ export class ChatService {
   }
 
   findRoom(roomId: string): Room | undefined {
-    return this.rooms.find(room => room.id === roomId);
+    return this.rooms.find((room) => room.id === roomId);
   }
 
   addRoom(roomName: string): Promise<Response> {
     return fetch(`${environment.SERVER_URL}/addRoom`, {
       headers: this.jsonHeaders,
       method: 'POST',
-      body: roomName
+      body: roomName,
     });
   }
 
@@ -101,8 +100,8 @@ export class ChatService {
       body: JSON.stringify({
         clientId: this.clientId,
         message,
-        roomId
-      })
+        roomId,
+      }),
     });
   }
 
@@ -116,8 +115,8 @@ export class ChatService {
       headers: this.jsonHeaders,
       body: JSON.stringify({
         clientId: this.clientId,
-        roomId
-      })
+        roomId,
+      }),
     });
   }
 
@@ -129,8 +128,8 @@ export class ChatService {
       headers: this.jsonHeaders,
       body: JSON.stringify({
         clientId: this.clientId,
-        roomId
-      })
+        roomId,
+      }),
     });
   }
 }

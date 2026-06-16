@@ -7,14 +7,19 @@
   </ion-toolbar>
 </ion-header>
 
-
 <ion-content class="ion-padding">
   <form (ngSubmit)="addRoom()">
     <ion-list lines="none">
       <ion-item>
-        <ion-input (keyup.enter)="addRoom()" [(ngModel)]="roomname" [required]="true" label="Enter Room Name"
-                   labelPlacement="stacked" name="roomname"
-                   type="text" />
+        <ion-input
+          (keyup.enter)="addRoom()"
+          [(ngModel)]="roomname"
+          [required]="true"
+          label="Enter Room Name"
+          labelPlacement="stacked"
+          name="roomname"
+          type="text"
+        />
       </ion-item>
       <ion-item>
         <ion-label>

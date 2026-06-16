@@ -1,6 +1,6 @@
-import {Component} from '@angular/core';
-import {register} from 'swiper/element/bundle';
-import {IonApp, IonRouterOutlet} from "@ionic/angular/standalone";
+import { Component, ChangeDetectionStrategy } from '@angular/core';
+import { register } from 'swiper/element/bundle';
+import { IonApp, IonRouterOutlet } from '@ionic/angular/standalone';
 
 register();
 
@@ -8,10 +8,7 @@ register();
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
-  imports: [
-    IonRouterOutlet,
-    IonApp
-  ]
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [IonRouterOutlet, IonApp],
 })
-export class AppComponent {
-}
+export class AppComponent {}

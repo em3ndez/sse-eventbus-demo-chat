@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import {
   AlertController,
   IonButton,
@@ -10,16 +10,28 @@ import {
   IonList,
   IonTitle,
   IonToolbar,
-  NavController
+  NavController,
 } from '@ionic/angular/standalone';
-import {ChatService} from '../../services/chat.service';
-import {FormsModule} from '@angular/forms';
+import { ChatService } from '../../services/chat.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.page.html',
   styleUrls: ['./signin.page.scss'],
-  imports: [FormsModule, IonHeader, IonToolbar, IonTitle, IonItem, IonLabel, IonButton, IonContent, IonList, IonInput]
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonItem,
+    IonLabel,
+    IonButton,
+    IonContent,
+    IonList,
+    IonInput,
+  ],
 })
 export class SigninPage implements OnInit {
   username: string | null = null;
@@ -50,15 +62,15 @@ export class SigninPage implements OnInit {
         const alert = await this.alertCtrl.create({
           header: 'Error',
           message: 'Username already exists',
-          buttons: [{
-            text: 'OK',
-            role: 'cancel'
-          }]
+          buttons: [
+            {
+              text: 'OK',
+              role: 'cancel',
+            },
+          ],
         });
         await alert.present();
       }
     }
   }
-
-
 }

@@ -1,4 +1,12 @@
-import {Component, ElementRef, inject, OnDestroy, OnInit, viewChild} from '@angular/core';
+import {
+  Component,
+  ElementRef,
+  inject,
+  OnDestroy,
+  OnInit,
+  viewChild,
+  ChangeDetectionStrategy,
+} from '@angular/core';
 import {
   IonBackButton,
   IonButton,
@@ -13,22 +21,40 @@ import {
   IonTextarea,
   IonTitle,
   IonToolbar,
-  NavController
+  NavController,
 } from '@ionic/angular/standalone';
-import {ChatService} from '../../services/chat.service';
-import {Message} from '../../models/message';
-import {ActivatedRoute} from '@angular/router';
-import {FormsModule} from '@angular/forms';
-import {EmojiPickerComponent} from '../../components/emoji-picker/emoji-picker';
-import {RelativeTimePipe} from '../../pipes/relative-time.pipe';
-import {addIcons} from "ionicons";
-import {exitOutline, happySharp, sendSharp} from "ionicons/icons";
+import { ChatService } from '../../services/chat.service';
+import { Message } from '../../models/message';
+import { ActivatedRoute } from '@angular/router';
+import { FormsModule } from '@angular/forms';
+import { EmojiPickerComponent } from '../../components/emoji-picker/emoji-picker';
+import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
+import { addIcons } from 'ionicons';
+import { exitOutline, happySharp, sendSharp } from 'ionicons/icons';
 
 @Component({
   selector: 'app-messages',
   templateUrl: './messages.page.html',
   styleUrls: ['./messages.page.scss'],
-  imports: [FormsModule, EmojiPickerComponent, RelativeTimePipe, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonItem, IonLabel, IonButton, IonIcon, IonList, IonFooter, IonTextarea, IonContent]
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [
+    FormsModule,
+    EmojiPickerComponent,
+    RelativeTimePipe,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonItem,
+    IonLabel,
+    IonButton,
+    IonIcon,
+    IonList,
+    IonFooter,
+    IonTextarea,
+    IonContent,
+  ],
 })
 export class MessagesPage implements OnInit, OnDestroy {
   readonly chatService = inject(ChatService);
@@ -45,7 +71,7 @@ export class MessagesPage implements OnInit, OnDestroy {
   private mutationObserver!: MutationObserver;
 
   constructor() {
-    addIcons({exitOutline, happySharp, sendSharp});
+    addIcons({ exitOutline, happySharp, sendSharp });
   }
 
   async exit(): Promise<void> {
@@ -53,7 +79,6 @@ export class MessagesPage implements OnInit, OnDestroy {
     await this.chatService.signout();
     this.navCtrl.navigateRoot('/signin');
   }
-
 
   ngOnInit(): void {
     this.roomId = this.route.snapshot.paramMap.get('id');
@@ -65,7 +90,7 @@ export class MessagesPage implements OnInit, OnDestroy {
         this.roomName = null;
       }
 
-      this.chatService.joinRoom(this.roomId, response => {
+      this.chatService.joinRoom(this.roomId, (response) => {
         this.messages.push(...JSON.parse(response.data));
         if (this.messages.length > 100) {
           this.messages.shift();
@@ -79,7 +104,7 @@ export class MessagesPage implements OnInit, OnDestroy {
       });
 
       this.mutationObserver.observe(this.chatElement().nativeElement, {
-        childList: true
+        childList: true,
       });
     }
   }
@@ -128,5 +153,4 @@ export class MessagesPage implements OnInit, OnDestroy {
       messageInput.nativeElement.focus();
     }
   }
-
 }

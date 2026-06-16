@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import {
   IonBackButton,
   IonButton,
@@ -13,26 +13,42 @@ import {
   IonList,
   IonTitle,
   IonToolbar,
-  NavController
+  NavController,
 } from '@ionic/angular/standalone';
-import {ChatService} from '../../services/chat.service';
-import {Room} from '../../models/room';
-import {FormsModule} from "@angular/forms";
-import {addIcons} from "ionicons";
-import {addSharp, chatbubbleSharp, exitOutline} from "ionicons/icons";
+import { ChatService } from '../../services/chat.service';
+import { Room } from '../../models/room';
+import { FormsModule } from '@angular/forms';
+import { addIcons } from 'ionicons';
+import { addSharp, chatbubbleSharp, exitOutline } from 'ionicons/icons';
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.page.html',
   styleUrls: ['./room.page.scss'],
-  imports: [FormsModule, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonItem, IonLabel, IonButton, IonIcon, IonContent, IonList, IonFab, IonFabButton]
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonItem,
+    IonLabel,
+    IonButton,
+    IonIcon,
+    IonContent,
+    IonList,
+    IonFab,
+    IonFabButton,
+  ],
 })
 export class RoomPage {
   readonly chatService = inject(ChatService);
   private readonly navCtrl = inject(NavController);
 
   constructor() {
-    addIcons({exitOutline, chatbubbleSharp, addSharp});
+    addIcons({ exitOutline, chatbubbleSharp, addSharp });
   }
 
   addRoom(): void {
@@ -48,5 +64,4 @@ export class RoomPage {
     this.chatService.signout();
     this.navCtrl.navigateRoot('/signin');
   }
-
 }

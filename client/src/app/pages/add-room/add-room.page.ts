@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
 import {
   AlertController,
   IonBackButton,
@@ -12,16 +12,30 @@ import {
   IonList,
   IonTitle,
   IonToolbar,
-  NavController
+  NavController,
 } from '@ionic/angular/standalone';
-import {ChatService} from '../../services/chat.service';
-import {FormsModule} from '@angular/forms';
+import { ChatService } from '../../services/chat.service';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-add-room',
   templateUrl: './add-room.page.html',
   styleUrls: ['./add-room.page.scss'],
-  imports: [FormsModule, IonHeader, IonToolbar, IonButtons, IonBackButton, IonTitle, IonContent, IonList, IonItem, IonInput, IonLabel, IonButton]
+  changeDetection: ChangeDetectionStrategy.Eager,
+  imports: [
+    FormsModule,
+    IonHeader,
+    IonToolbar,
+    IonButtons,
+    IonBackButton,
+    IonTitle,
+    IonContent,
+    IonList,
+    IonItem,
+    IonInput,
+    IonLabel,
+    IonButton,
+  ],
 })
 export class AddRoomPage {
   roomname = '';
@@ -38,13 +52,14 @@ export class AddRoomPage {
       const alert = await this.alertCtrl.create({
         header: 'Error',
         message: 'Room already exists',
-        buttons: [{
-          text: 'OK',
-          role: 'cancel'
-        }]
+        buttons: [
+          {
+            text: 'OK',
+            role: 'cancel',
+          },
+        ],
       });
       await alert.present();
     }
   }
-
 }

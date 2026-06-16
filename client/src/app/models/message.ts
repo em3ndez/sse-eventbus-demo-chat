@@ -6,4 +6,3 @@ export interface Message {
   type: 'JOIN' | 'LEAVE' | 'MSG';
   message: string;
 }
-

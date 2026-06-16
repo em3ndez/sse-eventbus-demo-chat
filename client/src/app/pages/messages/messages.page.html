@@ -29,12 +29,12 @@
               <div
                 [class.left]="msg.user !== chatService.username"
                 [class.right]="msg.user === chatService.username"
-                class="message">
-                <img class="user-img" src="assets/guy1.png">
+                class="message"
+              >
+                <img class="user-img" src="assets/guy1.png" />
                 <div class="msg-detail">
                   <div class="msg-info">
-                    <p>
-                      {{ msg.user }}&nbsp;&nbsp;&nbsp;{{ msg.sendDate | relativeTime }}</p>
+                    <p>{{ msg.user }}&nbsp;&nbsp;&nbsp;{{ msg.sendDate | relativeTime }}</p>
                   </div>
                   <div class="msg-content">
                     <span class="triangle"></span>
@@ -50,12 +50,12 @@
             <div
               [class.left]="msg.user !== chatService.username"
               [class.right]="msg.user === chatService.username"
-              class="message">
-              <img class="user-img" src="assets/guy1.png">
+              class="message"
+            >
+              <img class="user-img" src="assets/guy1.png" />
               <div class="msg-detail">
                 <div class="msg-info">
-                  <p>
-                    {{ msg.user }}&nbsp;&nbsp;&nbsp;{{ msg.sendDate | relativeTime }}</p>
+                  <p>{{ msg.user }}&nbsp;&nbsp;&nbsp;{{ msg.sendDate | relativeTime }}</p>
                 </div>
                 <div class="msg-content">
                   <span class="triangle"></span>
@@ -75,8 +75,15 @@
     <ion-button (click)="toggleEmojiPicker()" class="ion-item-right" fill="clear">
       <ion-icon name="happy-sharp" slot="icon-only" />
     </ion-button>
-    <ion-textarea #messageInput (focusin)="onFocus()" (keyup.enter)="sendMessage()" [(ngModel)]="message" name="message"
-                  placeholder="Type a message" type="text" />
+    <ion-textarea
+      #messageInput
+      (focusin)="onFocus()"
+      (keyup.enter)="sendMessage()"
+      [(ngModel)]="message"
+      name="message"
+      placeholder="Type a message"
+      type="text"
+    />
     <ion-button (click)="sendMessage()" class="ion-item-right" fill="clear">
       <ion-icon name="send-sharp" slot="icon-only" />
     </ion-button>

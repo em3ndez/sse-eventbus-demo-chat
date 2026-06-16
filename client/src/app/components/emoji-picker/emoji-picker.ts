@@ -1,11 +1,16 @@
-import {Component, CUSTOM_ELEMENTS_SCHEMA, forwardRef} from '@angular/core';
-import {ControlValueAccessor, NG_VALUE_ACCESSOR} from '@angular/forms';
-import {IonicSlides} from "@ionic/angular/standalone";
+import {
+  Component,
+  CUSTOM_ELEMENTS_SCHEMA,
+  forwardRef,
+  ChangeDetectionStrategy,
+} from '@angular/core';
+import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
+import { IonicSlides } from '@ionic/angular/standalone';
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export const EMOJI_PICKER_VALUE_ACCESSOR: any = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => EmojiPickerComponent),
-  multi: true
+  multi: true,
 };
 
 @Component({
@@ -13,7 +18,8 @@ export const EMOJI_PICKER_VALUE_ACCESSOR: any = {
   providers: [EMOJI_PICKER_VALUE_ACCESSOR],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './emoji-picker.html',
-  styleUrls: ['./emoji-picker.scss']
+  changeDetection: ChangeDetectionStrategy.Eager,
+  styleUrls: ['./emoji-picker.scss'],
 })
 export class EmojiPickerComponent implements ControlValueAccessor {
   swiperModules = [IonicSlides];
@@ -52,7 +58,8 @@ export class EmojiPickerComponent implements ControlValueAccessor {
   }
 
   private getEmojis(): string[][] {
-    const EMOJIS = '😀 😃 😄 😁 😆 😅 😂 🤣 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 😘 😗 😙 😚 😋 😜 😝 😛 🤑 🤗 🤓 😎 🤡 🤠 😏 😒 😞 😔 😟 😕 🙁' +
+    const EMOJIS =
+      '😀 😃 😄 😁 😆 😅 😂 🤣 ☺️ 😊 😇 🙂 🙃 😉 😌 😍 😘 😗 😙 😚 😋 😜 😝 😛 🤑 🤗 🤓 😎 🤡 🤠 😏 😒 😞 😔 😟 😕 🙁' +
       ' ☹️ 😣 😖 😫 😩 😤 😠 😡 😶 😐 😑 😯 😦 😧 😮 😲 😵 😳 😱 😨 😰 😢 😥 🤤 😭 😓 😪 😴 🙄 🤔 🤥 😬 🤐 🤢 🤧 😷 🤒 🤕 😈 👿' +
       ' 👹 👺 💩 👻 💀 ☠️ 👽 👾 🤖 🎃 😺 😸 😹 😻 😼 😽 🙀 😿 😾 👐 🙌 👏 🙏 🤝 👍 👎 👊 ✊ 🤛 🤜 🤞 ✌️ 🤘 👌 👈 👉 👆 👇 ☝️ ✋ 🤚' +
       ' 🖐 🖖 👋 🤙 💪 🖕 ✍️ 🤳 💅 🖖 💄 💋 👄 👅 👂 👃 👣 👁 👀 🗣 👤 👥 👶 👦 👧 👨 👩 👱‍♀️ 👱 👴 👵 👲 👳‍♀️ 👳 👮‍♀️ 👮 👷‍♀️ 👷' +
@@ -64,7 +71,7 @@ export class EmojiPickerComponent implements ControlValueAccessor {
       ' 🕶 🌂 ☂️';
 
     const emojiArr = EMOJIS.split(' ');
-    const groupNum = Math.ceil(emojiArr.length / (24));
+    const groupNum = Math.ceil(emojiArr.length / 24);
     const items = [];
 
     for (let i = 0; i < groupNum; i++) {
