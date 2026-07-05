@@ -14,7 +14,7 @@
 
 <ion-content class="ion-padding">
   <ion-list lines="none">
-    @for (room of chatService.rooms; track room) {
+    @for (room of chatService.rooms(); track room.id) {
       <ion-item (click)="joinRoom(room)" [button]="true">
         <ion-label>
           {{ room.name }}

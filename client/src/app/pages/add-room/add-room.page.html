@@ -8,12 +8,11 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form (ngSubmit)="addRoom()">
+  <form [formRoot]="roomNameForm" (submit)="addRoom()">
     <ion-list lines="none">
       <ion-item>
         <ion-input
-          (keyup.enter)="addRoom()"
-          [(ngModel)]="roomname"
+          [formField]="roomNameForm"
           [required]="true"
           label="Enter Room Name"
           labelPlacement="stacked"

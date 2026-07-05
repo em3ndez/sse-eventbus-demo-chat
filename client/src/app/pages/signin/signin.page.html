@@ -5,12 +5,11 @@
 </ion-header>
 
 <ion-content class="ion-padding">
-  <form (ngSubmit)="enterUsername()">
+  <form [formRoot]="usernameForm" (submit)="enterUsername()">
     <ion-list lines="none">
       <ion-item>
         <ion-input
-          (keyup.enter)="enterUsername()"
-          [(ngModel)]="username"
+          [formField]="usernameForm"
           label="Enter your Nickname"
           labelPlacement="stacked"
           name="username"

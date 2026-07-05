@@ -1,4 +1,5 @@
-import { Component, inject, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { Component, OnInit, inject, signal } from '@angular/core';
+import { FormField, FormRoot, form, required } from '@angular/forms/signals';
 import {
   AlertController,
   IonButton,
@@ -13,15 +14,14 @@ import {
   NavController,
 } from '@ionic/angular/standalone';
 import { ChatService } from '../../services/chat.service';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-signin',
   templateUrl: './signin.page.html',
   styleUrls: ['./signin.page.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    FormsModule,
+    FormField,
+    FormRoot,
     IonHeader,
     IonToolbar,
     IonTitle,
@@ -34,7 +34,10 @@ import { FormsModule } from '@angular/forms';
   ],
 })
 export class SigninPage implements OnInit {
-  username: string | null = null;
+  private readonly username = signal('');
+  protected readonly usernameForm = form(this.username, (path) => {
+    required(path);
+  });
   private readonly navCtrl = inject(NavController);
   private readonly chatService = inject(ChatService);
   private readonly alertCtrl = inject(AlertController);
@@ -52,11 +55,18 @@ export class SigninPage implements OnInit {
   }
 
   async enterUsername(): Promise<void> {
-    if (this.username !== null) {
-      const ok = await this.chatService.signin(this.username);
+    if (this.usernameForm().invalid()) {
+      this.usernameForm().markAsTouched();
+      return;
+    }
+
+    const username = this.usernameForm().value().trim();
+
+    if (username) {
+      const ok = await this.chatService.signin(username);
       if (ok) {
-        sessionStorage.setItem('username', this.username);
-        this.username = '';
+        sessionStorage.setItem('username', username);
+        this.usernameForm().reset('');
         this.navCtrl.navigateRoot('room');
       } else {
         const alert = await this.alertCtrl.create({

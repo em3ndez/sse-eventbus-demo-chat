@@ -1,4 +1,4 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   IonBackButton,
   IonButton,
@@ -17,7 +17,6 @@ import {
 } from '@ionic/angular/standalone';
 import { ChatService } from '../../services/chat.service';
 import { Room } from '../../models/room';
-import { FormsModule } from '@angular/forms';
 import { addIcons } from 'ionicons';
 import { addSharp, chatbubbleSharp, exitOutline } from 'ionicons/icons';
 
@@ -25,9 +24,7 @@ import { addSharp, chatbubbleSharp, exitOutline } from 'ionicons/icons';
   selector: 'app-room',
   templateUrl: './room.page.html',
   styleUrls: ['./room.page.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    FormsModule,
     IonHeader,
     IonToolbar,
     IonButtons,

@@ -1,4 +1,5 @@
-import { Component, inject, ChangeDetectionStrategy } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { FormField, FormRoot, form, required } from '@angular/forms/signals';
 import {
   AlertController,
   IonBackButton,
@@ -15,15 +16,14 @@ import {
   NavController,
 } from '@ionic/angular/standalone';
 import { ChatService } from '../../services/chat.service';
-import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-add-room',
   templateUrl: './add-room.page.html',
   styleUrls: ['./add-room.page.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    FormsModule,
+    FormField,
+    FormRoot,
     IonHeader,
     IonToolbar,
     IonButtons,
@@ -38,13 +38,21 @@ import { FormsModule } from '@angular/forms';
   ],
 })
 export class AddRoomPage {
-  roomname = '';
+  private readonly roomName = signal('');
+  protected readonly roomNameForm = form(this.roomName, (path) => {
+    required(path);
+  });
   private readonly navCtrl = inject(NavController);
   private readonly chatService = inject(ChatService);
   private readonly alertCtrl = inject(AlertController);
 
   async addRoom(): Promise<void> {
-    const response = await this.chatService.addRoom(this.roomname);
+    if (this.roomNameForm().invalid()) {
+      this.roomNameForm().markAsTouched();
+      return;
+    }
+
+    const response = await this.chatService.addRoom(this.roomNameForm().value().trim());
     const flag = await response.json();
     if (flag) {
       this.navCtrl.navigateBack('room');

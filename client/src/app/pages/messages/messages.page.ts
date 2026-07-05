@@ -1,12 +1,14 @@
 import {
   Component,
   ElementRef,
-  inject,
-  OnDestroy,
   OnInit,
+  OnDestroy,
+  computed,
+  inject,
+  signal,
   viewChild,
-  ChangeDetectionStrategy,
 } from '@angular/core';
+import { FormField, FormRoot, form, required } from '@angular/forms/signals';
 import {
   IonBackButton,
   IonButton,
@@ -26,7 +28,6 @@ import {
 import { ChatService } from '../../services/chat.service';
 import { Message } from '../../models/message';
 import { ActivatedRoute } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { EmojiPickerComponent } from '../../components/emoji-picker/emoji-picker';
 import { RelativeTimePipe } from '../../pipes/relative-time.pipe';
 import { addIcons } from 'ionicons';
@@ -36,9 +37,9 @@ import { exitOutline, happySharp, sendSharp } from 'ionicons/icons';
   selector: 'app-messages',
   templateUrl: './messages.page.html',
   styleUrls: ['./messages.page.scss'],
-  changeDetection: ChangeDetectionStrategy.Eager,
   imports: [
-    FormsModule,
+    FormField,
+    FormRoot,
     EmojiPickerComponent,
     RelativeTimePipe,
     IonHeader,
@@ -59,11 +60,15 @@ import { exitOutline, happySharp, sendSharp } from 'ionicons/icons';
 export class MessagesPage implements OnInit, OnDestroy {
   readonly chatService = inject(ChatService);
   readonly content = viewChild.required(IonContent);
-  message = '';
-  messages: Message[] = [];
+  private readonly message = signal('');
+  protected readonly messageForm = form(this.message, (path) => {
+    required(path);
+  });
+  readonly messages = signal<Message[]>([]);
   roomId: string | null = null;
   roomName: string | null = null;
   showEmojiPicker = false;
+  readonly username = computed(() => this.chatService.username());
   readonly messageInput = viewChild.required<ElementRef>('messageInput');
   private readonly route = inject(ActivatedRoute);
   private readonly navCtrl = inject(NavController);
@@ -91,10 +96,8 @@ export class MessagesPage implements OnInit, OnDestroy {
       }
 
       this.chatService.joinRoom(this.roomId, (response) => {
-        this.messages.push(...JSON.parse(response.data));
-        if (this.messages.length > 100) {
-          this.messages.shift();
-        }
+        const newMessages = JSON.parse(response.data) as Message[];
+        this.messages.update((messages) => [...messages, ...newMessages].slice(-100));
       });
 
       this.mutationObserver = new MutationObserver(() => {
@@ -117,11 +120,16 @@ export class MessagesPage implements OnInit, OnDestroy {
   }
 
   sendMessage(): void {
-    if (this.message && this.message.trim()) {
-      if (this.roomId) {
-        this.chatService.send(this.roomId, this.message);
-      }
-      this.message = '';
+    if (this.messageForm().invalid()) {
+      this.messageForm().markAsTouched();
+      return;
+    }
+
+    const message = this.messageForm().value().trim();
+
+    if (message && this.roomId) {
+      this.chatService.send(this.roomId, message);
+      this.messageForm().reset('');
 
       this.onFocus();
     }

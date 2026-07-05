@@ -1,19 +1,15 @@
-import { Injectable } from '@angular/core';
+import { Service, signal } from '@angular/core';
 import { Room } from '../models/room';
 import { environment } from '../../environments/environment';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class ChatService {
-  rooms: Room[] = [];
-  username: string | null = null;
+  readonly rooms = signal<Room[]>([]);
+  readonly username = signal<string | null>(null);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private eventSource: any = null;
+  private eventSource: EventSource | null = null;
   private clientId: string | null = null;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private roomListener: ((resp: any) => any) | null = null;
+  private roomListener: ((event: MessageEvent<string>) => void) | null = null;
 
   private jsonHeaders = new Headers({ 'Content-Type': 'application/json' });
 
@@ -23,8 +19,8 @@ export class ChatService {
 
   async signin(username: string, force = false): Promise<boolean> {
     this.clientId = null;
-    this.rooms = [];
-    this.username = null;
+    this.rooms.set([]);
+    this.username.set(null);
 
     let url = 'signin';
     if (force) {
@@ -41,18 +37,16 @@ export class ChatService {
       return false;
     }
 
-    this.username = username;
+    this.username.set(username);
     this.clientId = cid;
     this.eventSource = new EventSource(`${environment.SERVER_URL}/register/${this.clientId}`);
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.eventSource.addEventListener('roomAdded', (rsp: any) => {
-      const newRoom = JSON.parse(rsp.data);
-      this.rooms.push(newRoom);
+    this.eventSource.addEventListener('roomAdded', (rsp) => {
+      const newRoom = JSON.parse(rsp.data) as Room;
+      this.rooms.update((rooms) => [...rooms, newRoom]);
     });
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    this.eventSource.addEventListener('roomsRemoved', (rsp: any) => {
-      const roomIds = JSON.parse(rsp.data);
-      this.rooms = this.rooms.filter((room) => roomIds.indexOf(room.id) === -1);
+    this.eventSource.addEventListener('roomsRemoved', (rsp) => {
+      const roomIds = JSON.parse(rsp.data) as string[];
+      this.rooms.update((rooms) => rooms.filter((room) => roomIds.indexOf(room.id) === -1));
     });
 
     const resp = await fetch(`${environment.SERVER_URL}/subscribe`, {
@@ -60,7 +54,7 @@ export class ChatService {
       body: this.clientId,
     });
 
-    this.rooms = await resp.json();
+    this.rooms.set((await resp.json()) as Room[]);
 
     return true;
   }
@@ -72,8 +66,8 @@ export class ChatService {
     });
 
     this.clientId = null;
-    this.rooms = [];
-    this.username = null;
+    this.rooms.set([]);
+    this.username.set(null);
 
     if (this.eventSource) {
       this.eventSource.close();
@@ -82,7 +76,7 @@ export class ChatService {
   }
 
   findRoom(roomId: string): Room | undefined {
-    return this.rooms.find((room) => room.id === roomId);
+    return this.rooms().find((room) => room.id === roomId);
   }
 
   addRoom(roomName: string): Promise<Response> {
@@ -105,10 +99,9 @@ export class ChatService {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  joinRoom(roomId: string, roomListener: (resp: any) => any): Promise<Response> {
+  joinRoom(roomId: string, roomListener: (event: MessageEvent<string>) => void): Promise<Response> {
     this.roomListener = roomListener;
-    this.eventSource.addEventListener(roomId, this.roomListener);
+    this.eventSource?.addEventListener(roomId, this.roomListener);
 
     return fetch(`${environment.SERVER_URL}/join`, {
       method: 'POST',
@@ -121,7 +114,10 @@ export class ChatService {
   }
 
   leaveRoom(roomId: string): Promise<Response> {
-    this.eventSource.removeEventListener(roomId, this.roomListener);
+    if (this.roomListener) {
+      this.eventSource?.removeEventListener(roomId, this.roomListener);
+      this.roomListener = null;
+    }
 
     return fetch(`${environment.SERVER_URL}/leave`, {
       method: 'POST',

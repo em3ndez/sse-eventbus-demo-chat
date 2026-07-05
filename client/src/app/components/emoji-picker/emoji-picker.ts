@@ -1,13 +1,8 @@
-import {
-  Component,
-  CUSTOM_ELEMENTS_SCHEMA,
-  forwardRef,
-  ChangeDetectionStrategy,
-} from '@angular/core';
+import { Component, CUSTOM_ELEMENTS_SCHEMA, Provider, forwardRef } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IonicSlides } from '@ionic/angular/standalone';
-/* eslint-disable @typescript-eslint/no-explicit-any */
-export const EMOJI_PICKER_VALUE_ACCESSOR: any = {
+
+export const EMOJI_PICKER_VALUE_ACCESSOR: Provider = {
   provide: NG_VALUE_ACCESSOR,
   useExisting: forwardRef(() => EmojiPickerComponent),
   multi: true,
@@ -18,7 +13,6 @@ export const EMOJI_PICKER_VALUE_ACCESSOR: any = {
   providers: [EMOJI_PICKER_VALUE_ACCESSOR],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './emoji-picker.html',
-  changeDetection: ChangeDetectionStrategy.Eager,
   styleUrls: ['./emoji-picker.scss'],
 })
 export class EmojiPickerComponent implements ControlValueAccessor {
@@ -26,31 +20,31 @@ export class EmojiPickerComponent implements ControlValueAccessor {
   emojiArr: string[][] = [];
 
   private content: string | null = null;
-  private onChanged: ((fn: any) => void) | null = null;
-  private onTouched: ((fn: any) => void) | null = null;
+  private onChanged: ((value: string) => void) | null = null;
+  private onTouched: (() => void) | null = null;
 
   constructor() {
     this.emojiArr = this.getEmojis();
   }
 
-  writeValue(obj: any): void {
-    this.content = obj;
+  writeValue(value: unknown): void {
+    this.content = typeof value === 'string' ? value : '';
   }
 
-  registerOnChange(fn: (fn: any) => void): void {
+  registerOnChange(fn: (value: string) => void): void {
     this.onChanged = fn;
     this.setValue(this.content);
   }
 
-  registerOnTouched(fn: (fn: any) => void): void {
+  registerOnTouched(fn: () => void): void {
     this.onTouched = fn;
   }
 
-  setValue(val: any): any {
+  setValue(value: string | null): void {
     if (this.content == null) {
-      this.content = val;
+      this.content = value ?? '';
     } else {
-      this.content += val;
+      this.content += value ?? '';
     }
     if (this.content && this.onChanged) {
       this.onChanged(this.content);

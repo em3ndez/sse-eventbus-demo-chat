@@ -1,11 +1,9 @@
 import { Observable } from 'rxjs';
-import { inject, Injectable } from '@angular/core';
+import { Service, inject } from '@angular/core';
 import { ChatService } from './chat.service';
 import { NavController } from '@ionic/angular/standalone';
 
-@Injectable({
-  providedIn: 'root',
-})
+@Service()
 export class AuthGuard {
   private readonly chatService = inject(ChatService);
   private readonly navCtrl = inject(NavController);
